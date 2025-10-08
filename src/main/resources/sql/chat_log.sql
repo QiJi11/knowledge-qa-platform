@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS chat_log (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '日志ID',
+  session_id VARCHAR(64) NOT NULL COMMENT '会话ID',
+  role VARCHAR(16) NOT NULL COMMENT '消息角色',
+  content TEXT NOT NULL COMMENT '消息内容',
+  created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+
+  PRIMARY KEY (id),
+  KEY idx_chat_log_session (session_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天日志表';
