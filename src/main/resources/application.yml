@@ -1,0 +1,40 @@
+server:
+  port: 3001
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:design}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Redis（缓存服务）：可选；不可用时会自动降级为“无缓存但接口可用”
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+
+  # cache.type 可用值：redis / simple / none
+  cache:
+    type: ${CACHE_TYPE:redis}
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-placeholder}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:schema.sql
+        - classpath:sql/faq.sql
+        - classpath:sql/chat_log.sql
