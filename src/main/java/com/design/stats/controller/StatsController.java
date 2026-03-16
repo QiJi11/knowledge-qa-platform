@@ -1,6 +1,6 @@
 package com.design.stats.controller;
 
-import com.design.todo.api.ApiResponse;
+import com.design.common.Result;
 import com.design.stats.dto.ByCourseStatsResponse;
 import com.design.stats.dto.OverviewStatsResponse;
 import com.design.stats.dto.TrendStatsResponse;
@@ -24,13 +24,13 @@ public class StatsController {
      * GET /api/v1/learners/{learnerId}/stats/overview
      */
     @GetMapping("/overview")
-    public ApiResponse<OverviewStatsResponse> getOverviewStats(
+    public Result<OverviewStatsResponse> getOverviewStats(
             @PathVariable Long learnerId,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to) {
 
         OverviewStatsResponse stats = statsService.getOverviewStats(learnerId, from, to);
-        return ApiResponse.ok(stats);
+        return Result.ok(stats);
     }
 
     /**
@@ -38,7 +38,7 @@ public class StatsController {
      * GET /api/v1/learners/{learnerId}/stats/by-course
      */
     @GetMapping("/by-course")
-    public ApiResponse<ByCourseStatsResponse> getStatsByCourse(
+    public Result<ByCourseStatsResponse> getStatsByCourse(
             @PathVariable Long learnerId,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
@@ -46,7 +46,7 @@ public class StatsController {
             @RequestParam(required = false, defaultValue = "desc") String order) {
 
         ByCourseStatsResponse stats = statsService.getStatsByCourse(learnerId, from, to, sortBy, order);
-        return ApiResponse.ok(stats);
+        return Result.ok(stats);
     }
 
     /**
@@ -54,13 +54,13 @@ public class StatsController {
      * GET /api/v1/learners/{learnerId}/stats/trend
      */
     @GetMapping("/trend")
-    public ApiResponse<TrendStatsResponse> getTrendStats(
+    public Result<TrendStatsResponse> getTrendStats(
             @PathVariable Long learnerId,
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
             @RequestParam(required = false, defaultValue = "day") String granularity) {
 
         TrendStatsResponse stats = statsService.getTrendStats(learnerId, from, to, granularity);
-        return ApiResponse.ok(stats);
+        return Result.ok(stats);
     }
 }

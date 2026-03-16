@@ -3,8 +3,8 @@ package com.design.learningtask.controller;
 import com.design.learningtask.entity.LearningTask;
 import com.design.learningtask.repository.LearningTaskRepository;
 import com.design.learningtask.service.LearningTaskService;
-import com.design.todo.api.ApiException;
-import com.design.todo.api.ApiResponse;
+import com.design.common.ApiException;
+import com.design.common.Result;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.bind.annotation.*;
 
@@ -170,7 +170,7 @@ public class LearningTaskController {
   }
 
   @PostMapping
-  public ApiResponse<LearningTask> createTask(
+  public Result<LearningTask> createTask(
     @PathVariable("learnerId") String learnerIdRaw,
     @RequestBody JsonNode body
   ) {
@@ -195,11 +195,11 @@ public class LearningTaskController {
     }
 
     LearningTask created = service.createTask(learnerId, courseId, title, note, priority, dueDate, status);
-    return ApiResponse.ok(created);
+    return Result.ok(created);
   }
 
   @GetMapping("/{taskId}")
-  public ApiResponse<LearningTask> getTask(
+  public Result<LearningTask> getTask(
     @PathVariable("learnerId") String learnerIdRaw,
     @PathVariable("taskId") String taskIdRaw
   ) {
@@ -211,11 +211,11 @@ public class LearningTaskController {
       throw ApiException.notFound("未找到该任务");
     }
 
-    return ApiResponse.ok(task);
+    return Result.ok(task);
   }
 
   @GetMapping
-  public ApiResponse<Map<String, Object>> listTasks(
+  public Result<Map<String, Object>> listTasks(
     @PathVariable("learnerId") String learnerIdRaw,
     @RequestParam(required = false) String courseId,
     @RequestParam(required = false) String status,
@@ -302,11 +302,11 @@ public class LearningTaskController {
     data.put("pageSize", result.getPageSize());
     data.put("total", result.getTotal());
 
-    return ApiResponse.ok(data);
+    return Result.ok(data);
   }
 
   @PatchMapping("/{taskId}")
-  public ApiResponse<LearningTask> patchTask(
+  public Result<LearningTask> patchTask(
     @PathVariable("learnerId") String learnerIdRaw,
     @PathVariable("taskId") String taskIdRaw,
     @RequestBody JsonNode body
@@ -378,11 +378,11 @@ public class LearningTaskController {
       throw ApiException.notFound("未找到该任务");
     }
 
-    return ApiResponse.ok(updated);
+    return Result.ok(updated);
   }
 
   @DeleteMapping("/{taskId}")
-  public ApiResponse<Map<String, Object>> deleteTask(
+  public Result<Map<String, Object>> deleteTask(
     @PathVariable("learnerId") String learnerIdRaw,
     @PathVariable("taskId") String taskIdRaw
   ) {
@@ -393,6 +393,6 @@ public class LearningTaskController {
 
     Map<String, Object> data = new HashMap<>();
     data.put("deleted", true);
-    return ApiResponse.ok(data);
+    return Result.ok(data);
   }
 }

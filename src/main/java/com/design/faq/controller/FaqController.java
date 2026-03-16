@@ -4,8 +4,8 @@ import com.design.faq.dto.FaqUpsertRequest;
 import com.design.faq.entity.Faq;
 import com.design.faq.repository.FaqRepository;
 import com.design.faq.service.FaqService;
-import com.design.todo.api.ApiException;
-import com.design.todo.api.Result;
+import com.design.common.ApiException;
+import com.design.common.Result;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

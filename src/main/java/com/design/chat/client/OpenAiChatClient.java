@@ -22,6 +22,14 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.List;
 
+/**
+ * OpenAI Chat API 客户端（OkHttp 实现）。
+ *
+ * <p>选型说明：Spring AI 官方 Starter 需要 Spring Boot 3.x+，
+ * 而本项目基于 Spring Boot 2.7.x，不满足其最低要求。
+ * 因此采用 OkHttp 手写实现，同时也获得了对 SSE 流式
+ * 响应解析的更细粒度控制，包括超时降级和取消机制。</p>
+ */
 @Component
 public class OpenAiChatClient {
   private static final Logger log = LoggerFactory.getLogger(OpenAiChatClient.class);
@@ -212,6 +220,9 @@ public class OpenAiChatClient {
     String resolvedBaseUrl = baseUrl == null ? "https://api.openai.com" : baseUrl.trim();
     if (resolvedBaseUrl.endsWith("/")) {
       resolvedBaseUrl = resolvedBaseUrl.substring(0, resolvedBaseUrl.length() - 1);
+    }
+    if (resolvedBaseUrl.endsWith("/v1/chat/completions") || resolvedBaseUrl.endsWith("/openai")) {
+      return resolvedBaseUrl;
     }
     return resolvedBaseUrl + "/v1/chat/completions";
   }

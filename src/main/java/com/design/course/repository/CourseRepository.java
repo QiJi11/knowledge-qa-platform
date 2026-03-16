@@ -35,21 +35,25 @@ public class CourseRepository {
   private static final RowMapper<Course> COURSE_MAPPER = new RowMapper<>() {
     @Override
     public Course mapRow(ResultSet rs, int rowNum) throws SQLException {
-      return new Course(
-        rs.getLong("id"),
-        rs.getString("title"),
-        rs.getString("category"),
-        rs.getInt("level"),
-        rs.getString("cover_url"),
-        rs.getString("summary"),
-        rs.getString("description"),
-        rs.getInt("total_lessons"),
-        rs.getInt("total_minutes"),
-        rs.getInt("status"),
-        toIso(rs.getTimestamp("published_at")),
-        toIso(rs.getTimestamp("created_at")),
-        toIso(rs.getTimestamp("updated_at"))
-      );
+      Course c = new Course();
+      c.setId(rs.getLong("id"));
+      c.setTitle(rs.getString("title"));
+      c.setCategory(rs.getString("category"));
+      c.setLevel(rs.getInt("level"));
+      c.setCoverUrl(rs.getString("cover_url"));
+      c.setSummary(rs.getString("summary"));
+      c.setDescription(rs.getString("description"));
+      c.setPrice(rs.getBigDecimal("price"));
+      c.setOriginalPrice(rs.getBigDecimal("original_price"));
+      c.setViewCount(rs.getInt("view_count"));
+      c.setBuyCount(rs.getInt("buy_count"));
+      c.setTotalLessons(rs.getInt("total_lessons"));
+      c.setTotalMinutes(rs.getInt("total_minutes"));
+      c.setStatus(rs.getInt("status"));
+      c.setPublishedAt(toIso(rs.getTimestamp("published_at")));
+      c.setCreatedAt(toIso(rs.getTimestamp("created_at")));
+      c.setUpdatedAt(toIso(rs.getTimestamp("updated_at")));
+      return c;
     }
   };
 
@@ -57,7 +61,7 @@ public class CourseRepository {
     MapSqlParameterSource params = new MapSqlParameterSource().addValue("id", id);
     List<Course> list =
       jdbc.query(
-        "SELECT id, title, category, level, cover_url, summary, description, total_lessons, total_minutes, status, published_at, created_at, updated_at FROM courses WHERE id = :id",
+        "SELECT id, title, category, level, cover_url, summary, description, price, original_price, view_count, buy_count, total_lessons, total_minutes, status, published_at, created_at, updated_at FROM courses WHERE id = :id",
         params,
         COURSE_MAPPER
       );
@@ -211,6 +215,12 @@ public class CourseRepository {
       sortColumn = "created_at";
     } else if ("publishedAt".equals(sortBy)) {
       sortColumn = "published_at";
+    } else if ("viewCount".equals(sortBy)) {
+      sortColumn = "view_count";
+    } else if ("buyCount".equals(sortBy)) {
+      sortColumn = "buy_count";
+    } else if ("price".equals(sortBy)) {
+      sortColumn = "price";
     }
 
     String sortOrder = "DESC";
@@ -225,7 +235,7 @@ public class CourseRepository {
     params.addValue("offset", offset);
 
     String sql =
-      "SELECT id, title, category, level, cover_url, summary, description, total_lessons, total_minutes, status, published_at, created_at, updated_at FROM courses" +
+      "SELECT id, title, category, level, cover_url, summary, description, price, original_price, view_count, buy_count, total_lessons, total_minutes, status, published_at, created_at, updated_at FROM courses" +
       whereSql +
       " ORDER BY " + sortColumn + " " + sortOrder + ", id DESC" +
       " LIMIT :limit OFFSET :offset";

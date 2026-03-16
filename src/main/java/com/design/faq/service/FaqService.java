@@ -2,7 +2,7 @@ package com.design.faq.service;
 
 import com.design.faq.entity.Faq;
 import com.design.faq.repository.FaqRepository;
-import com.design.todo.api.ApiException;
+import com.design.common.ApiException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

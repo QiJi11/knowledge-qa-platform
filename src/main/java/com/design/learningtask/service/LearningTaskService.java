@@ -2,7 +2,7 @@ package com.design.learningtask.service;
 
 import com.design.learningtask.entity.LearningTask;
 import com.design.learningtask.repository.LearningTaskRepository;
-import com.design.todo.api.ApiException;
+import com.design.common.ApiException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,7 +76,7 @@ public class LearningTaskService {
     if (from == to) return;
 
     if (from == 0) {
-      if (to == 1 || to == 3) return;
+      if (to == 1 || to == 2 || to == 3) return;
       throw ApiException.badRequest("状态流转不允许：" + from + " -> " + to);
     }
 

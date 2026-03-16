@@ -6,8 +6,8 @@
   <groupId>com.design</groupId>
   <artifactId>backend-java</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>design-backend-java</name>
-  <description>Todo 后端（Java 版）</description>
+  <name>knowledge-qa-platform</name>
+  <description>知识库问答与学习助手后端平台</description>
 
   <properties>
     <java.version>17</java.version>

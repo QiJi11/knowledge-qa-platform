@@ -121,17 +121,37 @@ public class FaqRepository {
       return new ArrayList<>();
     }
 
-    String resolvedKeyword = "%" + keyword.trim() + "%";
-    MapSqlParameterSource params = new MapSqlParameterSource().addValue("keyword", resolvedKeyword);
+    // 将用户消息分词：按常见分隔符切分，并过滤掉太短的词
+    String trimmed = keyword.trim();
+    String[] tokens = trimmed.split("[\\s,，。？?！!、;；：:]+");
+    List<String> validTokens = new ArrayList<>();
+    for (String t : tokens) {
+      String s = t.trim();
+      if (s.length() >= 2) {
+        validTokens.add(s);
+      }
+    }
 
-    return jdbc.query(
-      "SELECT id, question, answer, keywords, category, hit_count, created_at, updated_at " +
-      "FROM faq " +
-      "WHERE question LIKE :keyword OR COALESCE(keywords, '') LIKE :keyword " +
-      "ORDER BY hit_count DESC, id DESC",
-      params,
-      FAQ_MAPPER
-    );
+    // 如果没有有效词，使用整句模糊匹配
+    if (validTokens.isEmpty()) {
+      validTokens.add(trimmed);
+    }
+
+    // 构建 OR 条件：每个 token 匹配 question/keywords/answer
+    StringBuilder sql = new StringBuilder(
+      "SELECT id, question, answer, keywords, category, hit_count, created_at, updated_at FROM faq WHERE ");
+    MapSqlParameterSource params = new MapSqlParameterSource();
+    List<String> conditions = new ArrayList<>();
+    for (int i = 0; i < validTokens.size(); i++) {
+      String paramName = "kw" + i;
+      String likeVal = "%" + validTokens.get(i) + "%";
+      conditions.add("(question LIKE :" + paramName + " OR COALESCE(keywords,'') LIKE :" + paramName + " OR answer LIKE :" + paramName + ")");
+      params.addValue(paramName, likeVal);
+    }
+    sql.append(String.join(" OR ", conditions));
+    sql.append(" ORDER BY hit_count DESC, id DESC LIMIT 5");
+
+    return jdbc.query(sql.toString(), params, FAQ_MAPPER);
   }
 
   public List<String> findAllQuestions() {

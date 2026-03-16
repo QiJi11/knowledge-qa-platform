@@ -25,15 +25,17 @@ spring:
 
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY:sk-placeholder}
-      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      api-key: ${OPENAI_API_KEY:sk-pollinations-free-api-key}
+      base-url: ${OPENAI_BASE_URL:https://text.pollinations.ai/openai}
       chat:
         options:
-          model: ${OPENAI_MODEL:gpt-4o-mini}
+          model: ${OPENAI_MODEL:openai}
 
   sql:
     init:
       mode: always
+      encoding: UTF-8
+      continue-on-error: true
       schema-locations:
         - classpath:schema.sql
         - classpath:sql/faq.sql

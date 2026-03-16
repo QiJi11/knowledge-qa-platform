@@ -3,7 +3,7 @@ package com.design.chat.controller;
 import com.design.chat.dto.ChatAskRequest;
 import com.design.chat.dto.ChatResponse;
 import com.design.chat.service.ChatService;
-import com.design.todo.api.Result;
+import com.design.common.Result;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

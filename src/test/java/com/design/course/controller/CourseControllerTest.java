@@ -2,7 +2,7 @@ package com.design.course.controller;
 
 import com.design.course.entity.Course;
 import com.design.course.service.CourseService;
-import com.design.todo.DesignTodoBackendApplication;
+import com.design.KnowledgeQaPlatformApplication;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CourseController.class)
-@ContextConfiguration(classes = DesignTodoBackendApplication.class)
+@ContextConfiguration(classes = KnowledgeQaPlatformApplication.class)
 @TestPropertySource(
   properties = {
     "spring.mvc.throw-exception-if-no-handler-found=true",

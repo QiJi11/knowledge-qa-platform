@@ -1,6 +1,7 @@
 package com.design.chat.service;
 
 import com.design.chat.client.OpenAiChatClient;
+import com.design.common.ApiException;
 import com.design.faq.entity.Faq;
 import com.design.faq.repository.FaqRepository;
 import com.design.chat.model.ChatMessage;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class ChatService {
-  public static final String FALLBACK_ANSWER = "抱歉，AI 暂时无法回答，请稍后重试。";
+  public static final String FALLBACK_ANSWER = "系统正在思考中，请稍后再试 🤔";
 
   private static final Logger log = LoggerFactory.getLogger(ChatService.class);
 
@@ -61,6 +62,10 @@ public class ChatService {
       log.warn("AI 调用超时，sessionId={}", sessionId, e);
       answer = FALLBACK_ANSWER;
     } catch (OpenAiChatClient.AiClientUnavailableException e) {
+      // API Key 未配置时不降级，直接向上抛出让 GlobalExceptionHandler 返回错误码
+      if (e.getMessage() != null && e.getMessage().contains("未配置有效的")) {
+        throw ApiException.badRequest(e.getMessage());
+      }
       log.warn("AI 调用不可用，sessionId={}, message={}", sessionId, e.getMessage());
       answer = FALLBACK_ANSWER;
     }
@@ -73,7 +78,7 @@ public class ChatService {
   }
 
   public SseEmitter askStream(String message, String sessionId) {
-    SseEmitter emitter = new SseEmitter(20000L);
+    SseEmitter emitter = new SseEmitter(15000L); // 15s超时兜底防卡死
     List<ChatMessage> historyMessages = sessionService.getRecentMessages(sessionId);
     String systemPrompt = buildSystemPrompt(sessionId, faqRepository.searchByKeywords(message));
 
@@ -190,15 +195,16 @@ public class ChatService {
 
   private String buildSystemPrompt(String sessionId, List<Faq> matchedFaqs) {
     StringBuilder prompt = new StringBuilder();
-    prompt.append("你是知识库问答平台的 AI 助手。请优先基于提供的 FAQ 知识库回答用户问题；");
-    prompt.append("如果知识库中没有直接答案，请明确说明并给出稳妥、简洁的建议。");
+    prompt.append("你是一个在线学习平台的AI学习助手。你的职责是：1)推荐合适的课程；2)回答技术问题；3)解答平台使用问题。");
+    prompt.append("请用简洁友好的中文回答。对于日常问候请热情回复。");
     prompt.append("当前会话ID：").append(sessionId).append("。");
-    prompt.append("以下是知识库参考内容：");
 
     if (matchedFaqs.isEmpty()) {
-      prompt.append("暂无匹配 FAQ。");
+      prompt.append("知识库暂无匹配内容。请根据通用知识回答，但不要编造本平台的具体课程名称或价格。如果用户问课程推荐，请引导用户到课程列表页浏览。");
       return prompt.toString();
     }
+
+    prompt.append("以下是知识库中与用户问题相关的参考资料，请优先基于这些资料回答：");
 
     int maxFaqCount = Math.min(matchedFaqs.size(), 5);
     for (int i = 0; i < maxFaqCount; i++) {

@@ -3,8 +3,8 @@ package com.design.course.controller;
 import com.design.course.entity.Course;
 import com.design.course.repository.CourseRepository;
 import com.design.course.service.CourseService;
-import com.design.todo.api.ApiException;
-import com.design.todo.api.ApiResponse;
+import com.design.common.ApiException;
+import com.design.common.Result;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.web.bind.annotation.*;
 
@@ -149,7 +149,7 @@ public class CourseController {
   }
 
   @PostMapping
-  public ApiResponse<Course> createCourse(@RequestBody JsonNode body) {
+  public Result<Course> createCourse(@RequestBody JsonNode body) {
     ensureObject(body);
 
     String title = readRequiredString(body, "title", 200);
@@ -184,11 +184,11 @@ public class CourseController {
         publishedAt
       );
 
-    return ApiResponse.ok(created);
+    return Result.ok(created);
   }
 
   @GetMapping("/{courseId}")
-  public ApiResponse<Course> getCourse(@PathVariable("courseId") String courseId) {
+  public Result<Course> getCourse(@PathVariable("courseId") String courseId) {
     long id = parseCourseIdOrThrow(courseId);
 
     Course course = service.getCourse(id);
@@ -196,11 +196,11 @@ public class CourseController {
       throw ApiException.notFound("未找到该课程");
     }
 
-    return ApiResponse.ok(course);
+    return Result.ok(course);
   }
 
   @GetMapping
-  public ApiResponse<Map<String, Object>> listCourses(
+  public Result<Map<String, Object>> listCourses(
     @RequestParam(required = false) String keyword,
     @RequestParam(required = false) String category,
     @RequestParam(required = false) Integer level,
@@ -218,8 +218,10 @@ public class CourseController {
     }
 
     String resolvedSortBy = sortBy == null ? "publishedAt" : sortBy.trim();
-    if (!resolvedSortBy.equals("publishedAt") && !resolvedSortBy.equals("createdAt")) {
-      throw ApiException.badRequest("sortBy 只能是 publishedAt 或 createdAt");
+    if (!resolvedSortBy.equals("publishedAt") && !resolvedSortBy.equals("createdAt")
+        && !resolvedSortBy.equals("viewCount") && !resolvedSortBy.equals("buyCount")
+        && !resolvedSortBy.equals("price")) {
+      throw ApiException.badRequest("sortBy 只能是 publishedAt、createdAt、viewCount、buyCount 或 price");
     }
 
     String resolvedOrder = order == null ? "desc" : order.trim().toLowerCase();
@@ -258,11 +260,11 @@ public class CourseController {
     data.put("pageSize", result.getPageSize());
     data.put("total", result.getTotal());
 
-    return ApiResponse.ok(data);
+    return Result.ok(data);
   }
 
   @PutMapping("/{courseId}")
-  public ApiResponse<Course> updateCourse(@PathVariable("courseId") String courseId, @RequestBody JsonNode body) {
+  public Result<Course> updateCourse(@PathVariable("courseId") String courseId, @RequestBody JsonNode body) {
     long id = parseCourseIdOrThrow(courseId);
     ensureObject(body);
 
@@ -305,17 +307,17 @@ public class CourseController {
       throw ApiException.notFound("未找到该课程");
     }
 
-    return ApiResponse.ok(updated);
+    return Result.ok(updated);
   }
 
   @DeleteMapping("/{courseId}")
-  public ApiResponse<Map<String, Object>> deleteCourse(@PathVariable("courseId") String courseId) {
+  public Result<Map<String, Object>> deleteCourse(@PathVariable("courseId") String courseId) {
     long id = parseCourseIdOrThrow(courseId);
 
     service.deleteCourse(id);
 
     Map<String, Object> data = new HashMap<>();
     data.put("deleted", true);
-    return ApiResponse.ok(data);
+    return Result.ok(data);
   }
 }

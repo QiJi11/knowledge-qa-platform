@@ -8,6 +8,10 @@ public class Course {
   private String coverUrl;
   private String summary;
   private String description;
+  private java.math.BigDecimal price;
+  private java.math.BigDecimal originalPrice;
+  private Integer viewCount;
+  private Integer buyCount;
   private Integer totalLessons;
   private Integer totalMinutes;
   private Integer status;
@@ -150,4 +154,16 @@ public class Course {
   public void setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
   }
+
+  public java.math.BigDecimal getPrice() { return price; }
+  public void setPrice(java.math.BigDecimal price) { this.price = price; }
+
+  public java.math.BigDecimal getOriginalPrice() { return originalPrice; }
+  public void setOriginalPrice(java.math.BigDecimal originalPrice) { this.originalPrice = originalPrice; }
+
+  public Integer getViewCount() { return viewCount; }
+  public void setViewCount(Integer viewCount) { this.viewCount = viewCount; }
+
+  public Integer getBuyCount() { return buyCount; }
+  public void setBuyCount(Integer buyCount) { this.buyCount = buyCount; }
 }

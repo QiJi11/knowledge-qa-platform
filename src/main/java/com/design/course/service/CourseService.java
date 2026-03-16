@@ -2,7 +2,7 @@ package com.design.course.service;
 
 import com.design.course.entity.Course;
 import com.design.course.repository.CourseRepository;
-import com.design.todo.api.ApiException;
+import com.design.common.ApiException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
