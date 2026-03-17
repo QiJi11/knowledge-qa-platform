@@ -145,18 +145,18 @@ INSERT INTO user_courses (user_id, course_id, progress) VALUES
 (2, 1026, 90)
 ON DUPLICATE KEY UPDATE progress=VALUES(progress);
 
--- admin 的学习任务
+-- admin 的学习任务（散点分布 2025-08 ~ 2026-01）
 INSERT INTO learning_tasks (id, learner_id, course_id, title, status, created_at) VALUES
-(1, 1, 1004, '学习：Java 高级架构师进阶', 1, CURRENT_TIMESTAMP(3)),
-(2, 1, 1013, '深入理解 JVM 内存模型', 1, CURRENT_TIMESTAMP(3)),
-(3, 1, 1020, '搭建 Spring Cloud 微服务集群', 0, CURRENT_TIMESTAMP(3)),
-(4, 1, 1027, '掌握 Netty 核心原理', 0, CURRENT_TIMESTAMP(3)),
-(5, 1, 1001, '学习 Spring Boot 基础', 2, CURRENT_TIMESTAMP(3))
+(1, 1, 1004, '学习：Java 高级架构师进阶', 1, '2025-08-20 09:30:00'),
+(2, 1, 1013, '深入理解 JVM 内存模型', 1, '2025-10-12 14:15:00'),
+(3, 1, 1020, '搭建 Spring Cloud 微服务集群', 0, '2025-11-25 10:00:00'),
+(4, 1, 1027, '掌握 Netty 核心原理', 0, '2026-01-05 16:40:00'),
+(5, 1, 1001, '学习 Spring Boot 基础', 2, '2025-09-03 11:20:00')
 ON DUPLICATE KEY UPDATE id=id;
 
--- student 的学习任务
+-- student 的学习任务（散点分布 2025-09 ~ 2026-01）
 INSERT INTO learning_tasks (id, learner_id, course_id, title, status, created_at) VALUES
-(6, 2, 1002, '学习 Vue 3 基础语法', 1, CURRENT_TIMESTAMP(3)),
-(7, 2, 1017, '编写第一个 Prompt', 0, CURRENT_TIMESTAMP(3)),
-(8, 2, 1026, 'Docker 容器入门实操', 2, CURRENT_TIMESTAMP(3))
+(6, 2, 1002, '学习 Vue 3 基础语法', 1, '2025-09-15 19:00:00'),
+(7, 2, 1017, '编写第一个 Prompt', 0, '2025-12-01 10:30:00'),
+(8, 2, 1026, 'Docker 容器入门实操', 2, '2026-01-18 14:45:00')
 ON DUPLICATE KEY UPDATE id=id;
