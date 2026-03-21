@@ -1,4 +1,4 @@
-# 🔍 Knowledge QA Platform
+# Knowledge QA Platform
 
 > 基于 Spring Boot + Spring AI 的知识库智能问答平台
 
@@ -10,13 +10,35 @@
 
 ---
 
-## 📖 项目简介
+## 界面预览
+
+### 系统主页
+<div align="center">
+  <img src="docs/images/knowledge_homepage.png" width="90%">
+  <br><b>学习平台主页（含 AI 助手入口）</b>
+</div>
+
+### 智能助手交互
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/knowledge_chat_before.png" width="90%"><br><b>提出问题</b></td>
+    <td align="center"><img src="docs/images/knowledge_chat_ai_response.png" width="90%"><br><b>AI 实时响应</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/knowledge_chat_round1.png" width="90%"><br><b>多轮会话 - 轮次一</b></td>
+    <td align="center"><img src="docs/images/knowledge_chat_round2.png" width="90%"><br><b>多轮会话 - 轮次二</b></td>
+  </tr>
+</table>
+
+---
+
+## 项目简介
 
 将传统在线学习平台改造为 AI 驱动的知识库问答系统。在保留原有 13 个 CRUD 接口的基础上，新增了 FAQ 知识库、AI 智能问答、SSE 流式传输、多轮会话管理等功能模块。
 
 ---
 
-## ✨ 功能模块
+## 功能模块
 
 | 模块 | 功能 | 技术要点 |
 |------|------|----------|
@@ -30,28 +52,17 @@
 
 ---
 
-## 🏗️ 架构说明
+## 架构说明
 
-```
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Client     │────▶│  Controller  │────▶│   Service   │
-│  (SSE/REST)  │◀────│   Layer      │◀────│   Layer     │
-└─────────────┘     └──────────────┘     └──────┬──────┘
-                                                │
-                    ┌───────────────────────────┤
-                    ▼               ▼           ▼
-              ┌──────────┐  ┌───────────┐ ┌──────────┐
-              │   MySQL   │  │   Redis   │ │  AI API  │
-              │  (FAQ +   │  │ (Session  │ │ (OpenAI  │
-              │  ChatLog) │  │ + Cache)  │ │ /其他)   │
-              └──────────┘  └───────────┘ └──────────┘
-```
+<div align="center">
+  <img src="docs/images/architecture.png" width="90%">
+</div>
 
-**请求流程**：Client → Controller → BloomFilter 判断 → 查 Redis 缓存 → 未命中则检索 FAQ + 拼 SystemPrompt → 调 AI API → 写缓存 → 返回
+**请求流程**：Client → Controller → BloomFilter → 查 Redis 缓存 → **命中**直接返回 / **未命中**检索 FAQ + 拼 SystemPrompt → 调 AI API → 写缓存 → 返回
 
 ---
 
-## 🚀 快速启动
+## 快速启动
 
 ### 环境要求
 - JDK 17+
@@ -59,7 +70,7 @@
 - MySQL 8.0+
 - Redis 7+
 
-### 配置
+### 环境变量配置
 
 ```bash
 # 设置环境变量（或修改 application.yml）
@@ -71,7 +82,7 @@ export AI_BASE_URL=https://api.openai.com
 export AI_MODEL=gpt-3.5-turbo
 ```
 
-### 运行
+### 运行服务
 
 ```bash
 # 1. 导入数据库
@@ -83,7 +94,7 @@ mvn spring-boot:run
 
 ---
 
-## 📡 API 列表
+## API 接口列表
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -97,11 +108,11 @@ mvn spring-boot:run
 
 ---
 
-## 📚 课程管理模块（todo）
+## 课程管理模块（todo）
 
 > 本项目同时包含一个课程管理子系统，提供课程（Course）的增删改查 REST API，支持排序、分页、过滤、缓存等功能。
 
-### 接口
+### 接口定义
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -122,7 +133,7 @@ mvn spring-boot:run
 #### 1) 配置 MySQL 环境变量（PowerShell）
 
 ```powershell
-cd D:\soft\design\backend-java
+cd D:\AtoC\dev\soft_projects\knowledge-qa-platform
 $env:MYSQL_HOST="127.0.0.1"
 $env:MYSQL_PORT="3306"
 $env:MYSQL_USER="root"
@@ -145,17 +156,17 @@ $env:REDIS_URL="redis://127.0.0.1:6379"
 $env:REDIS_TTL_SECONDS="15"
 ```
 
-#### 3) 启动
+#### 3) 启动项目
 
 ```powershell
-# 方式 1：直接跑
+# 方式 1：直接运行
 mvn -q spring-boot:run
 
-# 方式 2：用脚本（会帮你检查 JDK / MYSQL_PASSWORD）
+# 方式 2：使用启动脚本（会检查 JDK / MYSQL 环境变量）
 .\run-dev.ps1
 ```
 
-### 课程管理验证
+### 课程管理功能验证
 
 - 健康检查：`http://localhost:3001/health`
 - 创建课程：
@@ -169,15 +180,9 @@ mvn -q spring-boot:run
   curl "http://localhost:3001/api/courses?sortBy=price&limit=10"
   ```
 
-### 课程管理技术栈
-
-- Spring Boot 2.7.18
-- Spring JDBC
-- MySQL 8.x
-- Redis（可选）
-- JUnit 5 + MockMvc
-
-### 课程管理测试
+### 技术栈与测试
+- **核心组件**：Spring Boot 2.7.18, Spring JDBC, MySQL 8.x, Redis (可选)
+- **单元与集成测试**：JUnit 5 + MockMvc
 
 ```powershell
 # 运行所有测试
@@ -186,12 +191,12 @@ mvn clean test
 # 只运行单元测试
 mvn test -Dtest=CourseControllerTest
 
-# 只运行集成测试（需要 MySQL）
+# 只运行集成测试（需要本地具有 MySQL 配置环境）
 mvn test -Dtest=CourseIntegrationTest
 ```
 
 ---
 
-## 📄 License
+## License
 
 MIT License
