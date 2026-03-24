@@ -121,8 +121,29 @@ public class FaqRepository {
       return new ArrayList<>();
     }
 
-    // 将用户消息分词：按常见分隔符切分，并过滤掉太短的词
     String trimmed = keyword.trim();
+
+    // 优先使用 FULLTEXT 全文检索（利用 idx_faq_fulltext 索引）
+    // MATCH...AGAINST 支持 ngram 分词，相关性评分排序，性能远优于 LIKE
+    try {
+      String fulltextSql =
+        "SELECT id, question, answer, keywords, category, hit_count, created_at, updated_at," +
+        "  MATCH(question, keywords) AGAINST (:kw IN BOOLEAN MODE) AS score " +
+        "FROM faq " +
+        "WHERE MATCH(question, keywords) AGAINST (:kw IN BOOLEAN MODE) " +
+        "ORDER BY score DESC, hit_count DESC " +
+        "LIMIT 5";
+
+      MapSqlParameterSource ftParams = new MapSqlParameterSource().addValue("kw", trimmed);
+      List<Faq> ftResults = jdbc.query(fulltextSql, ftParams, FAQ_MAPPER);
+      if (!ftResults.isEmpty()) {
+        return ftResults;
+      }
+    } catch (Exception e) {
+      // 全文检索失败（如 MySQL 版本不支持），降级到 LIKE
+    }
+
+    // LIKE 兜底：分词后多字段模糊匹配
     String[] tokens = trimmed.split("[\\s,，。？?！!、;；：:]+");
     List<String> validTokens = new ArrayList<>();
     for (String t : tokens) {
@@ -131,13 +152,10 @@ public class FaqRepository {
         validTokens.add(s);
       }
     }
-
-    // 如果没有有效词，使用整句模糊匹配
     if (validTokens.isEmpty()) {
       validTokens.add(trimmed);
     }
 
-    // 构建 OR 条件：每个 token 匹配 question/keywords/answer
     StringBuilder sql = new StringBuilder(
       "SELECT id, question, answer, keywords, category, hit_count, created_at, updated_at FROM faq WHERE ");
     MapSqlParameterSource params = new MapSqlParameterSource();
@@ -159,6 +177,14 @@ public class FaqRepository {
       "SELECT question FROM faq",
       new MapSqlParameterSource(),
       (rs, rowNum) -> rs.getString("question")
+    );
+  }
+
+  public List<Faq> findAll() {
+    return jdbc.query(
+      "SELECT id, question, answer, keywords, category, hit_count, created_at, updated_at FROM faq ORDER BY id",
+      new MapSqlParameterSource(),
+      FAQ_MAPPER
     );
   }
 

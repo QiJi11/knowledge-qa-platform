@@ -92,6 +92,34 @@ mysql -u root -p < src/main/resources/sql/faq.sql
 mvn spring-boot:run
 ```
 
+### 前端启动
+
+项目前端分为两部分，均位于 `frontend/` 目录下：
+
+| 前端 | 目录 | 说明 |
+|------|------|------|
+| **用户端** | `frontend/web` | 学习平台主页、AI 智能问答 |
+| **管理后台** | `frontend/admin` | 课程管理、数据统计 |
+
+```powershell
+# 启动用户端前端
+cd frontend/web
+pnpm install
+pnpm dev
+```
+👉 **用户端首页**：`http://localhost:4000`（启动后会自动打开浏览器）
+
+### 测试账号
+
+| 角色 | 用户名 | 密码 | 说明 |
+|------|--------|------|------|
+| 管理员 | `admin` | `admin123` | 可进入管理后台 |
+| 学员 | `student` | `123456` | 体验购买、学习计划等功能 |
+
+### 本地访问说明（后端）
+- **健康检查地址**：`http://localhost:3001/health`
+- **说明**：后端启动成功后可访问此地址验证服务状态。
+
 ---
 
 ## API 接口列表

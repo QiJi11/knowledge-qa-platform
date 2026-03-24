@@ -172,7 +172,7 @@ public class OpenAiChatClient {
 
     ArrayNode messages = payload.putArray("messages");
     ObjectNode developerMessage = messages.addObject();
-    developerMessage.put("role", "developer");
+    developerMessage.put("role", "system");
     developerMessage.put("content", systemPrompt);
 
     appendHistoryMessages(messages, historyMessages);
@@ -181,9 +181,12 @@ public class OpenAiChatClient {
     userNode.put("role", "user");
     userNode.put("content", userMessage);
 
+    String url = resolveChatUrl();
+    log.info("AI 请求 URL: {}, stream: {}", url, stream);
+
     return
       new Request.Builder()
-        .url(resolveChatUrl())
+        .url(url)
         .header("Authorization", "Bearer " + apiKey.trim())
         .header("Content-Type", "application/json")
         .post(RequestBody.create(payload.toString(), JSON))

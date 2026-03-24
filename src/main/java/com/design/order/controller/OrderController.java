@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.design.auth.controller.AuthController;
+
 @RestController
 @RequestMapping("/api/v1/order")
 public class OrderController {
@@ -20,10 +22,12 @@ public class OrderController {
   }
 
   @PostMapping("/create")
-  public Result<Order> createOrder(@RequestBody JsonNode body) {
+  public Result<Order> createOrder(@RequestBody JsonNode body,
+      @RequestHeader(value = "Authorization", required = false) String authHeader) {
     long courseId = body.path("courseId").asLong();
     String payType = body.has("payType") ? body.get("payType").asText() : "alipay";
-    Order order = orderService.createOrder(courseId, payType);
+    Long userId = AuthController.resolveUserId(authHeader);
+    Order order = orderService.createOrder(courseId, payType, userId != null ? userId : 1L);
     return Result.ok(order);
   }
 
@@ -54,13 +58,15 @@ public class OrderController {
   public Result<Map<String, Object>> listOrders(
     @RequestParam(required = false) Integer page,
     @RequestParam(required = false) Integer pageSize,
-    @RequestParam(required = false) Integer status
+    @RequestParam(required = false) Integer status,
+    @RequestHeader(value = "Authorization", required = false) String authHeader
   ) {
     int resolvedPage = page == null ? 1 : page;
     int resolvedPageSize = pageSize == null ? 20 : pageSize;
+    Long userId = AuthController.resolveUserId(authHeader);
 
-    List<Order> items = orderService.listOrders(status, resolvedPage, resolvedPageSize);
-    int total = orderService.countOrders(status);
+    List<Order> items = orderService.listOrders(userId != null ? userId : 1L, status, resolvedPage, resolvedPageSize);
+    int total = orderService.countOrders(userId != null ? userId : 1L, status);
 
     Map<String, Object> data = new HashMap<>();
     data.put("items", items);

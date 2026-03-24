@@ -19,7 +19,7 @@ public class OrderService {
     this.courseService = courseService;
   }
 
-  public Order createOrder(long courseId, String payType) {
+  public Order createOrder(long courseId, String payType, long userId) {
     Course course = courseService.getCourse(courseId);
     if (course == null) {
       throw ApiException.notFound("课程不存在");
@@ -29,7 +29,7 @@ public class OrderService {
     }
 
     String orderNo = "ORD" + System.currentTimeMillis() + (int)(Math.random() * 1000);
-    Order order = orderRepository.createOrder(orderNo, 1L, courseId, course.getPrice(), payType);
+    Order order = orderRepository.createOrder(orderNo, userId, courseId, course.getPrice(), payType);
     if (order != null) {
       order.setCourseTitle(course.getTitle());
       order.setCourseCoverUrl(course.getCoverUrl());
@@ -78,8 +78,8 @@ public class OrderService {
     }
   }
 
-  public List<Order> listOrders(Integer status, int page, int pageSize) {
-    List<Order> orders = orderRepository.listOrders(1L, status, page, pageSize);
+  public List<Order> listOrders(long userId, Integer status, int page, int pageSize) {
+    List<Order> orders = orderRepository.listOrders(userId, status, page, pageSize);
     for (Order o : orders) {
       Course course = courseService.getCourse(o.getCourseId());
       if (course != null) {
@@ -90,7 +90,7 @@ public class OrderService {
     return orders;
   }
 
-  public int countOrders(Integer status) {
-    return orderRepository.countOrders(1L, status);
+  public int countOrders(long userId, Integer status) {
+    return orderRepository.countOrders(userId, status);
   }
 }

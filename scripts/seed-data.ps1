@@ -1,4 +1,4 @@
-﻿# backend-java：导入种子数据（课程 + 学习任务）
+# backend-java：导入种子数据（课程 + 学习任务）
 #
 # 给小白的说明：
 # 1) 这一步是可选的，但强烈建议先导入一次，否则前端页面可能“没有数据”。
@@ -17,7 +17,8 @@ function Require-Command([string]$name, [string]$hint) {
 
 Require-Command 'mysql' '请安装 MySQL 客户端（mysql.exe），并确保 mysql 在 PATH 中可用。'
 
-$projectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectDir = Split-Path -Parent $scriptDir
 $seedFile = Join-Path $projectDir 'src\main\resources\db\seed_data.sql'
 
 if (-not (Test-Path $seedFile)) {
