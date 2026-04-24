@@ -3,7 +3,7 @@
 > 基于 Spring Boot + Spring AI 的知识库智能问答平台
 
 ![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-6DB33F?style=flat-square&logo=springboot&logoColor=white)
 ![Spring AI](https://img.shields.io/badge/Spring%20AI-0.8-6DB33F?style=flat-square&logo=spring&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white)
@@ -209,7 +209,9 @@ mvn -q spring-boot:run
   ```
 
 ### 技术栈与测试
-- **核心组件**：Spring Boot 2.7.18, Spring JDBC, MySQL 8.x, Redis (可选)
+> ✅ 2026-04-24 已完成 Spring Boot 2.7.18 → 3.2.0 升级，完整 jakarta 迁移
+
+- **核心组件**：Spring Boot 3.2.0, Spring JDBC, MySQL 8.x, Redis (可选)
 - **单元与集成测试**：JUnit 5 + MockMvc
 
 ```powershell
