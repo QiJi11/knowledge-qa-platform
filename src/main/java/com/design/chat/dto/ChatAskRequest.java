@@ -1,7 +1,7 @@
 package com.design.chat.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class ChatAskRequest {
   @NotBlank(message = "message 必须是非空字符串")

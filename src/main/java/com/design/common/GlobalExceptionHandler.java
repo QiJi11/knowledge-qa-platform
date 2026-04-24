@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -11,10 +12,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -71,6 +73,21 @@ public class GlobalExceptionHandler {
     for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
       message = violation.getMessage();
       break;
+    }
+    return ResponseEntity.ok(Result.fail(400001, message));
+  }
+
+  @ExceptionHandler(HandlerMethodValidationException.class)
+  public ResponseEntity<Result<Object>> handleHandlerMethodValidationException(
+      HandlerMethodValidationException ex) {
+    String message = "参数校验失败";
+    for (var validationResult : ex.getAllValidationResults()) {
+      for (MessageSourceResolvable error : validationResult.getResolvableErrors()) {
+        if (error.getDefaultMessage() != null && !error.getDefaultMessage().isBlank()) {
+          message = error.getDefaultMessage();
+          return ResponseEntity.ok(Result.fail(400001, message));
+        }
+      }
     }
     return ResponseEntity.ok(Result.fail(400001, message));
   }

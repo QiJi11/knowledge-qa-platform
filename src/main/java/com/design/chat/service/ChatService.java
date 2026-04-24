@@ -6,6 +6,7 @@ import com.design.faq.entity.Faq;
 import com.design.faq.repository.FaqRepository;
 import com.design.chat.model.ChatMessage;
 import com.design.faq.service.FaqBloomFilterService;
+import com.design.faq.service.FaqEmbeddingService;
 import okhttp3.Call;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
